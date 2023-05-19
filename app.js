@@ -99,4 +99,23 @@ const authenticateToken = (request, response, next) => {
   }
 };
 
-module.exports = app();
+// API-11 /tweets/:tweetId/
+app.delete(
+  "/tweets/:tweetId/",
+  authenticateToken,
+  async (request, response) => {
+    const { tweetId } = request.params;
+    const deleteQuery = `DELETE FROM tweet WHERE tweet_id = ${tweetId};`;
+    const dbResponse = await db.run(deleteQuery);
+    response.send("Tweet Removed");
+  }
+);
+
+// API-10 /user/tweets/
+app.post("/user/tweets/", authenticateToken, async (request, response) => {
+  const { tweet } = request.body;
+  const createTweetQuery = `INSERT INTO tweet(tweet)VALUES("${tweet}");`;
+  const dbResponse = await db.run(createTweetQuery);
+  response.send("Created a Tweet");
+});
+module.exports = app;
